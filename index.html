@@ -342,8 +342,7 @@ section.block{padding-block:clamp(56px,8vw,96px) 0}
 .shelf text{font-family:var(--display); font-weight:600; font-size:11px; letter-spacing:.12em; fill:#FFF8EC}
 .book{transform-box:fill-box; transform-origin:bottom center; transition:transform .4s cubic-bezier(.2,.7,.2,1); cursor:pointer}
 .book:hover{transform:translateY(-10px)}
-.book.pull{animation:pull 5s ease-in-out infinite}
-.book.pull.p2{animation-delay:2.5s}
+.book.pull{animation:pull 9.9s ease-in-out infinite}
 @keyframes pull{0%,70%,100%{transform:none}80%,90%{transform:translateY(-12px) rotate(-3deg)}}
 
 /* contact */
@@ -954,10 +953,10 @@ section.block{padding-block:clamp(56px,8vw,96px) 0}
       <div>
         <p class="eyebrow">Off the clock</p>
         <h2 style="margin-top:6px">Usually reading</h2>
-        <p>Outside work I read a lot, mostly <strong>Russian classics</strong> and <strong>mystery thrillers</strong>. Favourite authors: <strong>Fyodor Dostoevsky</strong> and <strong>Freida McFadden</strong>.</p>
+        <p>Outside work I read a lot, mostly <strong>classics</strong> and <strong>mystery thrillers</strong>. Favourite authors: <strong>Fyodor Dostoevsky</strong> and <strong>Freida McFadden</strong>.</p>
       </div>
       <div class="shelf">
-        <svg viewBox="0 0 380 170" role="img" aria-label="A bookshelf with two books labelled Dostoevsky and McFadden">
+        <svg viewBox="0 0 380 170" role="img" aria-label="A bookshelf with books by Dostoevsky, Kafka, Austen, McFadden, Feeney and Plath, with Dostoevsky and McFadden marked as favourites">
           <g id="shelfBooks"></g>
           <rect x="6" y="150" width="368" height="8" rx="2" fill="var(--metal)"/>
           <rect x="14" y="158" width="8" height="10" fill="var(--metal)"/><rect x="358" y="158" width="8" height="10" fill="var(--metal)"/>
@@ -1152,20 +1151,30 @@ section.block{padding-block:clamp(56px,8vw,96px) 0}
 
   /* bookshelf */
   const books = [
-    { w:18, h:96, c:'#6B7F99' }, { w:24, h:112, c:'#8E2B34', label:'DOSTOEVSKY', pull:1 }, { w:16, h:88, c:'#C9A45C' },
-    { w:20, h:104, c:'#3E5A48' }, { w:14, h:80, c:'#7B8494' }, { w:22, h:100, c:'#2A4A7A' },
-    { w:26, h:116, c:'#1F2A3A', label:'McFADDEN', pull:2 }, { w:18, h:92, c:'#A0643A' }, { w:15, h:84, c:'#5B6D5A' },
-    { w:21, h:108, c:'#6A3B4E' }, { w:17, h:90, c:'#C08A3E' }, { w:19, h:98, c:'#4A5E7A' }
+    { w:18, h:92,  c:'#6B7F99' },
+    { w:24, h:114, c:'#8E2B34', label:'DOSTOEVSKY', fav:1 },
+    { w:16, h:86,  c:'#C9A45C' },
+    { w:20, h:100, c:'#3E5A48', label:'KAFKA' },
+    { w:20, h:98,  c:'#B85C3A', label:'AUSTEN', lean:1 },
+    { w:18, h:88,  c:'#7B8494' },
+    { w:26, h:116, c:'#1F2A3A', label:'McFADDEN', fav:1 },
+    { w:20, h:102, c:'#2A4A7A', label:'FEENEY' },
+    { w:15, h:82,  c:'#5B6D5A' },
+    { w:21, h:96,  c:'#6A3B4E', label:'PLATH' },
+    { w:17, h:90,  c:'#9A6A2E' },
+    { w:18, h:94,  c:'#4A5E7A' }
   ];
-  let x = 22, bh = '';
-  books.forEach((b, i) => {
-    const y = 150 - b.h;
-    const cls = 'book' + (b.pull ? ' pull' + (b.pull === 2 ? ' p2' : '') : '');
-    bh += `<g class="${cls}"><rect x="${x}" y="${y}" width="${b.w}" height="${b.h}" rx="2" fill="${b.c}"/>` +
-          `<rect x="${x}" y="${y + 10}" width="${b.w}" height="2" fill="rgba(255,255,255,.25)"/><rect x="${x}" y="${y + b.h - 14}" width="${b.w}" height="2" fill="rgba(255,255,255,.25)"/>` +
-          (b.label ? `<text x="${x + b.w / 2 + 4}" y="${150 - b.h / 2}" text-anchor="middle" transform="rotate(-90 ${x + b.w / 2} ${150 - b.h / 2})">${b.label}</text>` : '') + `</g>`;
-    x += b.w + 3;
-    if (i === 4) { bh += `<g transform="rotate(-14 ${x + 8} 150)"><rect x="${x}" y="58" width="20" height="92" rx="2" fill="#B85C3A"/></g>`; x += 30; }
+  let x = 20, bh = '', k = 0;
+  books.forEach(b => {
+    const y = 150 - b.h, band = b.fav ? '#F0B03E' : 'rgba(255,255,255,.25)';
+    const inner = `<rect x="${x}" y="${y}" width="${b.w}" height="${b.h}" rx="2" fill="${b.c}"/>` +
+      `<rect x="${x}" y="${y + 10}" width="${b.w}" height="${b.fav ? 3 : 2}" fill="${band}"/><rect x="${x}" y="${y + b.h - 14}" width="${b.w}" height="${b.fav ? 3 : 2}" fill="${band}"/>` +
+      (b.label ? `<text x="${x + b.w / 2 + 4}" y="${150 - b.h / 2}" text-anchor="middle" transform="rotate(-90 ${x + b.w / 2} ${150 - b.h / 2})">${b.label}</text>` : '');
+    const anim = b.label ? ` pull" style="animation-delay:${(k++ * 1.1).toFixed(1)}s` : '';
+    bh += b.lean
+      ? `<g class="book${anim}"><g transform="rotate(14 ${x} 150)">${inner}</g></g>`
+      : `<g class="book${anim}">${inner}</g>`;
+    x += b.w + 3 + (b.lean ? 26 : 0);
   });
   bh += `<g><rect x="${x + 14}" y="118" width="26" height="32" rx="4" fill="var(--surface-2)" stroke="var(--metal)" stroke-width="1.5"/><path d="M${x + 40},126 c8,0 8,14 0,14" fill="none" stroke="var(--metal)" stroke-width="1.5"/><path class="steam" d="M${x + 22},112 c-4,-6 4,-8 0,-14 M${x + 31},112 c-4,-6 4,-8 0,-14" fill="none" stroke="var(--muted)" stroke-width="1.3" stroke-linecap="round" opacity=".6"/></g>`;
   $('shelfBooks').innerHTML = bh;
